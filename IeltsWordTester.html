@@ -342,6 +342,44 @@
             margin-top: 22px;
         }
 
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 20px 0 22px;
+        }
+
+        .dashboard-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+
+        .dashboard-card .label {
+            display: block;
+            color: var(--text-soft);
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-card .value {
+            display: block;
+            font-size: clamp(1.4rem, 3vw, 2.1rem);
+            font-weight: 700;
+        }
+
+        .success-rate {
+            color: var(--success);
+        }
+
+        .danger-rate {
+            color: var(--danger);
+        }
+
         .list-container {
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
@@ -496,8 +534,38 @@
                 </div>
 
                 <div id="result-screen" class="result-screen" style="display:none;">
-                    <h1>Test Finished!</h1>
-                    <h2>Your Score: <span id="score-text" class="score-tag">0</span> / 20</h2>
+                    <h1>Performance Dashboard</h1>
+                    <p>Your latest IELTS spelling test results are below.</p>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <span class="label">Score</span>
+                            <span id="score-text" class="value score-tag">0</span>
+                        </div>
+                        <div class="dashboard-card">
+                            <span class="label">Success rate</span>
+                            <span id="success-rate" class="value success-rate">0%</span>
+                        </div>
+                        <div class="dashboard-card">
+                            <span class="label">Words tested</span>
+                            <span id="words-tested" class="value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid" style="margin-top: 0;">
+                        <div class="dashboard-card">
+                            <span class="label">Correct</span>
+                            <span id="correct-count" class="value success-rate">0</span>
+                        </div>
+                        <div class="dashboard-card">
+                            <span class="label">Wrong</span>
+                            <span id="wrong-count" class="value danger-rate">0</span>
+                        </div>
+                        <div class="dashboard-card">
+                            <span class="label">Status</span>
+                            <span id="status-text" class="value">Good</span>
+                        </div>
+                    </div>
 
                     <div class="result-grid">
                         <div>
@@ -512,7 +580,8 @@
                     </div>
 
                     <div class="test-actions" style="margin-top: 24px;">
-                        <button class="primary-btn" onclick="startTest()">Take Another Test</button>
+                        <button class="primary-btn" onclick="startTest()">New Test</button>
+                        <button class="secondary-btn" onclick="showStartScreen()">Back to Home</button>
                     </div>
                 </div>
             </div>
@@ -837,10 +906,26 @@
             showWord();
         }
 
+        function showStartScreen() {
+            document.getElementById('test-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+            renderUserStats();
+        }
+
         function showResults() {
+            const totalQuestions = wordsList.length || 20;
+            const successRate = Math.round((score / totalQuestions) * 100);
+            const statusText = successRate >= 80 ? 'Excellent' : successRate >= 60 ? 'Good' : successRate >= 40 ? 'Fair' : 'Needs Practice';
+
             document.getElementById('test-screen').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
             document.getElementById('score-text').textContent = score;
+            document.getElementById('success-rate').textContent = successRate + '%';
+            document.getElementById('words-tested').textContent = totalQuestions;
+            document.getElementById('correct-count').textContent = score;
+            document.getElementById('wrong-count').textContent = totalQuestions - score;
+            document.getElementById('status-text').textContent = statusText;
 
             let correctHTML = '';
             for (let i = 0; i < correctAnswers.length; i++) {
