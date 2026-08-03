@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IELTS Spelling Master</title>
+    <style>
+        :root {
+            --bg: #08131f;
+            --bg-2: #0f1f2f;
+            --panel: rgba(18, 28, 40, 0.9);
+            --panel-strong: #131f2d;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #5c7cfa;
+            --primary-strong: #4158d6;
+            --primary-soft: rgba(92, 124, 250, 0.15);
+            --success: #38d39f;
+            --success-soft: rgba(56, 211, 159, 0.15);
+            --danger: #ff6b6b;
+            --danger-soft: rgba(255, 107, 107, 0.12);
+            --text: #ecf3ff;
+            --text-soft: #9bb0c7;
+            --muted: #7c8ca6;
+            --shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Arial, Helvetica, sans-serif;
+            background: radial-gradient(circle at top, #122739, var(--bg) 45%);
+            color: var(--text);
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .auth-shell, .app-shell {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-card {
+            width: min(100%, 440px);
+            background: rgba(12, 19, 30, 0.95);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 28px 26px;
+        }
+
+        .brand {
+            display: inline-block;
+            background: var(--primary-soft);
+            color: #dfe8ff;
+            border: 1px solid rgba(92, 124, 250, 0.25);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        h1, h2, h3, p {
+            margin-top: 0;
+        }
+
+        .auth-card h1 {
+            font-size: clamp(2rem, 4vw, 2.6rem);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-soft);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .social-btn, button {
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .social-btn:hover, button:hover {
+            transform: translateY(-1px);
+        }
+
+        .google-btn {
+            width: 100%;
+            background: #ffffff;
+            color: #0d1724;
+            font-weight: 700;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 13px;
+            margin: 12px 0 18px;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            gap: 8px;
+            color: var(--text-soft);
+            font-size: 14px;
+        }
+
+        .field input {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 14px 14px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: rgba(92, 124, 250, 0.9);
+            box-shadow: 0 0 0 3px rgba(92, 124, 250, 0.18);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+            color: white;
+            font-weight: 700;
+            padding: 15px 18px;
+            font-size: 16px;
+            margin-top: 4px;
+        }
+
+        .secondary-btn {
+            background: rgba(255,255,255,0.03);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 10px 14px;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .auth-message {
+            min-height: 22px;
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-soft);
+        }
+
+        .auth-message.error {
+            color: var(--danger);
+        }
+
+        .auth-message.success {
+            color: var(--success);
+        }
+
+        .app-shell {
+            display: none;
+        }
+
+        .app-wrapper {
+            width: min(100%, 760px);
+            background: rgba(12, 19, 30, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-soft);
+            font-size: 14px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), #7d8ef8);
+            color: white;
+            font-weight: 700;
+        }
+
+        .box {
+            width: min(100%, 560px);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            padding: 28px 20px 18px;
+            border-radius: 20px;
+            margin: 24px auto 0;
+        }
+
+        .start-screen, .test-screen, .result-screen {
+            text-align: center;
+        }
+
+        .start-screen h1, .result-screen h1 {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            margin-bottom: 12px;
+        }
+
+        .start-screen p, .result-screen p {
+            color: var(--text-soft);
+            font-size: 16px;
+        }
+
+        .start-screen .primary-btn {
+            margin-top: 20px;
+            min-width: 220px;
+        }
+
+        .word-button {
+            background: rgba(92, 124, 250, 0.15);
+            color: var(--text);
+            padding: 18px 20px;
+            font-size: 30px;
+            width: 100%;
+            max-width: 220px;
+            margin: 8px 0 18px;
+        }
+
+        .input-wrap {
+            margin-top: 12px;
+        }
+
+        .input-wrap input {
+            width: min(100%, 340px);
+            padding: 16px 18px;
+            text-align: center;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 20px;
+            outline: none;
+        }
+
+        .input-wrap input:focus {
+            border-color: rgba(92, 124, 250, 0.9);
+            box-shadow: 0 0 0 3px rgba(92, 124, 250, 0.15);
+        }
+
+        .test-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .score-tag {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 24px 0 8px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            display: block;
+            color: var(--text-soft);
+            font-size: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .stat-card .value {
+            display: block;
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            text-align: left;
+            margin-top: 22px;
+        }
+
+        .list-container {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 14px;
+            min-height: 70px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .correct { color: var(--success); font-weight: 700; }
+        .wrong { color: var(--danger); font-weight: 700; }
+
+        .tag {
+            display: inline-block;
+            background: rgba(92,124,250,0.12);
+            border: 1px solid rgba(92,124,250,0.25);
+            border-radius: 999px;
+            color: #dfe8ff;
+            padding: 7px 10px;
+            margin: 6px 6px 0 0;
+            font-size: 13px;
+        }
+
+        .history-panel {
+            margin: 28px auto 0;
+            width: min(100%, 560px);
+            padding: 20px 14px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .history-panel h3 {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .history-list {
+            min-height: 40px;
+            text-align: left;
+            color: var(--text-soft);
+        }
+
+        .history-actions {
+            text-align: left;
+            margin-top: 14px;
+        }
+
+        .danger-btn {
+            background: rgba(255,107,107,0.12);
+            border: 1px solid rgba(255,107,107,0.25);
+            color: #ffc4c4;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            padding-bottom: 12px;
+        }
+
+        .footer a {
+            color: #dfe8ff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 16px;
+            }
+
+            .auth-card, .app-wrapper {
+                border-radius: 18px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .word-button {
+                font-size: 26px;
+                max-width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="login-screen" class="auth-shell">
+        <div class="auth-card">
+            <div class="brand">IELTS Practice</div>
+            <h1>Welcome back</h1>
+            <p class="subtitle">Sign in to continue your spelling mastery journey.</p>
+
+            <button class="social-btn google-btn" onclick="signInWithGoogle()">Continue with Google</button>
+
+            <div class="divider">or</div>
+
+            <form class="auth-form" id="email-login-form" onsubmit="handleEmailLogin(event)">
+                <label class="field">
+                    <span>Email</span>
+                    <input id="email-input" type="email" placeholder="you@example.com" required />
+                </label>
+
+                <label class="field">
+                    <span>Password</span>
+                    <input id="password-input" type="password" placeholder="Enter your password" required />
+                </label>
+
+                <button class="primary-btn" type="submit">Sign in with email</button>
+            </form>
+
+            <div id="auth-message" class="auth-message" aria-live="polite"></div>
+        </div>
+    </div>
+
+    <div id="app-screen" class="app-shell">
+        <div class="app-wrapper">
+            <header class="topbar">
+                <div class="user-pill">
+                    <div class="avatar" id="user-avatar">U</div>
+                    <span id="user-name">User</span>
+                </div>
+                <button class="secondary-btn" onclick="signOut()">Sign out</button>
+            </header>
+
+            <div class="box">
+                <div id="start-screen" class="start-screen">
+                    <h1>IELTS Spelling Master</h1>
+                    <p>Listen, type, and improve your vocabulary accuracy.</p>
+
+                    <div id="profile-stats" class="stats-row" aria-live="polite"></div>
+
+                    <button class="primary-btn" onclick="startTest()">Start 20-Word Test</button>
+                </div>
+
+                <div id="test-screen" class="test-screen" style="display:none;">
+                    <h2 id="word-number">Word 1 of 20</h2>
+                    <button class="word-button" onclick="playAudio()">🔊 Play Sound</button>
+                    <form onsubmit="submitAnswer(event)">
+                        <div class="input-wrap">
+                            <input type="text" id="user-input" autocomplete="off" placeholder="Type here..." autofocus />
+                        </div>
+                        <div class="test-actions">
+                            <button class="primary-btn" type="submit">Submit Answer</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="result-screen" class="result-screen" style="display:none;">
+                    <h1>Test Finished!</h1>
+                    <h2>Your Score: <span id="score-text" class="score-tag">0</span> / 20</h2>
+
+                    <div class="result-grid">
+                        <div>
+                            <h3>Correct Words</h3>
+                            <div id="correct-list" class="list-container"></div>
+                        </div>
+
+                        <div>
+                            <h3>Wrong Words</h3>
+                            <div id="wrong-list" class="list-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="test-actions" style="margin-top: 24px;">
+                        <button class="primary-btn" onclick="startTest()">Take Another Test</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="history-panel">
+                <h3>Mastered Words History</h3>
+                <div id="history-list" class="history-list"></div>
+                <div class="history-actions">
+                    <button class="danger-btn" onclick="clearHistory()">Clear History</button>
+                </div>
+            </div>
+
+            <div class="footer">
+                Developed by <strong>Zain Ul Abdeen</strong> | Instagram: <a href="https://instagram.com" target="_blank" rel="noreferrer">@0zainshaikh</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEYS = {
+            currentUser: 'ielts_current_user',
+            users: 'ielts_users',
+            history: 'spelling_history',
+            review: 'spelling_review'
+        };
+
+        function getUserStorageKey(email) {
+            return 'ielts_user_profile_' + encodeURIComponent((email || '').toLowerCase());
+        }
+
+        function getUserProfile() {
+            const user = getCurrentUser();
+            if (!user || !user.email) {
+                return {
+                    history: [],
+                    review: [],
+                    stats: {
+                        totalWordsDone: 0,
+                        totalCorrect: 0,
+                        totalTests: 0,
+                        totalAttempts: 0
+                    }
+                };
+            }
+
+            const key = getUserStorageKey(user.email);
+            return safeJSONParse(localStorage.getItem(key), {
+                history: [],
+                review: [],
+                stats: {
+                    totalWordsDone: 0,
+                    totalCorrect: 0,
+                    totalTests: 0,
+                    totalAttempts: 0
+                }
+            });
+        }
+
+        function saveUserProfile(profile) {
+            const user = getCurrentUser();
+            if (!user || !user.email) return;
+            localStorage.setItem(getUserStorageKey(user.email), JSON.stringify(profile));
+        }
+
+        const mainWords = [
+            'environment', 'technology', 'government', 'education', 'society', 'academic', 'analysis',
+            'approach', 'benefit', 'concept', 'context', 'economic', 'financial', 'individual', 'legal',
+            'method', 'period', 'policy', 'research', 'significant', 'sustainable', 'theory', 'lucrative',
+            'ubiquitous', 'prevalent', 'profound', 'infrastructure', 'vulnerability', 'implementation',
+            'fluctuation'
+        ];
+
+        let wordsList = [];
+        let reviewWords = [];
+        let currentIndex = 0;
+        let score = 0;
+        let correctAnswers = [];
+        let wrongAnswers = [];
+
+        function safeJSONParse(value, fallback) {
+            try {
+                return JSON.parse(value) ?? fallback;
+            } catch (error) {
+                return fallback;
+            }
+        }
+
+        function getCurrentUser() {
+            return safeJSONParse(localStorage.getItem(STORAGE_KEYS.currentUser), null);
+        }
+
+        function setCurrentUser(user) {
+            localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(user));
+        }
+
+        function removeCurrentUser() {
+            localStorage.removeItem(STORAGE_KEYS.currentUser);
+        }
+
+        function showAuthScreen() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app-screen').style.display = 'none';
+        }
+
+        function showAppScreen() {
+            const user = getCurrentUser();
+            if (!user) {
+                showAuthScreen();
+                return;
+            }
+
+            const name = user.name || user.email.split('@')[0];
+            document.getElementById('user-name').textContent = name;
+            document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'flex';
+            renderUserStats();
+            showHistory();
+        }
+
+        function renderUserStats() {
+            const profile = getUserProfile();
+            const stats = profile.stats || {
+                totalWordsDone: 0,
+                totalCorrect: 0,
+                totalTests: 0,
+                totalAttempts: 0
+            };
+
+            document.getElementById('profile-stats').innerHTML = `
+                <div class="stat-card">
+                    <span class="label">Words done</span>
+                    <span class="value">${stats.totalWordsDone || 0}</span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">Mastered</span>
+                    <span class="value">${(profile.history || []).length}</span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">Tests</span>
+                    <span class="value">${stats.totalTests || 0}</span>
+                </div>
+            `;
+        }
+
+        function showMessage(message, type = '') {
+            const messageBox = document.getElementById('auth-message');
+            messageBox.textContent = message;
+            messageBox.className = 'auth-message';
+            if (type) messageBox.classList.add(type);
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+        }
+
+        function getUsers() {
+            return safeJSONParse(localStorage.getItem(STORAGE_KEYS.users), {});
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+        }
+
+        function handleEmailLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-input').value.trim().toLowerCase();
+            const password = document.getElementById('password-input').value.trim();
+
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long.', 'error');
+                return;
+            }
+
+            const users = getUsers();
+            const existingUser = users[email];
+
+            if (existingUser && existingUser.password !== password) {
+                showMessage('Incorrect password. Please try again.', 'error');
+                return;
+            }
+
+            if (!existingUser) {
+                users[email] = {
+                    email,
+                    password,
+                    name: email.split('@')[0]
+                };
+                saveUsers(users);
+            }
+
+            const user = {
+                email,
+                name: existingUser ? existingUser.name : email.split('@')[0]
+            };
+
+            setCurrentUser(user);
+            showMessage('Signed in successfully.', 'success');
+            showAppScreen();
+        }
+
+        function signInWithGoogle() {
+            const googleEmail = 'student@gmail.com';
+            const users = getUsers();
+            if (!users[googleEmail]) {
+                users[googleEmail] = {
+                    email: googleEmail,
+                    password: 'google-demo',
+                    name: 'Google User'
+                };
+                saveUsers(users);
+            }
+
+            setCurrentUser({ email: googleEmail, name: 'Google User' });
+            showAppScreen();
+        }
+
+        function signOut() {
+            removeCurrentUser();
+            showAuthScreen();
+            document.getElementById('email-login-form').reset();
+            showMessage('', '');
+        }
+
+        function getReviewWords() {
+            return getUserProfile().review || [];
+        }
+
+        function setReviewWords(words) {
+            const profile = getUserProfile();
+            profile.review = Array.from(new Set(words));
+            saveUserProfile(profile);
+        }
+
+        function startTest() {
+            currentIndex = 0;
+            score = 0;
+            correctAnswers = [];
+            wrongAnswers = [];
+            reviewWords = getReviewWords();
+            wordsList = [];
+
+            let combined = [...reviewWords, ...mainWords];
+            combined = [...new Set(combined)];
+            wordsList = combined.sort(() => 0.5 - Math.random()).slice(0, 20);
+
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('test-screen').style.display = 'block';
+            showWord();
+        }
+
+        function updateUserRuntimeStats() {
+            const profile = getUserProfile();
+            profile.stats = profile.stats || {
+                totalWordsDone: 0,
+                totalCorrect: 0,
+                totalTests: 0,
+                totalAttempts: 0
+            };
+
+            profile.stats.totalTests = (profile.stats.totalTests || 0) + 1;
+            profile.stats.totalAttempts = (profile.stats.totalAttempts || 0) + wordsList.length;
+            profile.stats.totalCorrect = (profile.stats.totalCorrect || 0) + score;
+            profile.stats.totalWordsDone = (profile.stats.totalWordsDone || 0) + correctAnswers.length;
+
+            saveUserProfile(profile);
+            renderUserStats();
+        }
+
+        function showWord() {
+            if (currentIndex >= wordsList.length) {
+                showResults();
+                return;
+            }
+
+            const wordNumber = document.getElementById('word-number');
+            wordNumber.textContent = 'Word ' + (currentIndex + 1) + ' of ' + wordsList.length;
+            document.getElementById('user-input').value = '';
+            document.getElementById('user-input').focus();
+            playAudio();
+        }
+
+        function playAudio() {
+            const currentWord = wordsList[currentIndex];
+            if (!currentWord) return;
+
+            if ('speechSynthesis' in window) {
+                const msg = new SpeechSynthesisUtterance(currentWord);
+                msg.lang = 'en-US';
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        function submitAnswer(event) {
+            event.preventDefault();
+            const typed = document.getElementById('user-input').value.trim().toLowerCase();
+            const correct = wordsList[currentIndex].toLowerCase();
+
+            if (!typed) return;
+
+            if (typed === correct) {
+                score++;
+                correctAnswers.push(correct);
+                saveToHistory(correct);
+                reviewWords = reviewWords.filter(word => word !== correct);
+            } else {
+                wrongAnswers.push({ typed, correct });
+                if (!reviewWords.includes(correct)) {
+                    reviewWords.push(correct);
+                }
+            }
+
+            setReviewWords(reviewWords);
+            currentIndex++;
+            showWord();
+        }
+
+        function showResults() {
+            document.getElementById('test-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            document.getElementById('score-text').textContent = score;
+
+            let correctHTML = '';
+            for (let i = 0; i < correctAnswers.length; i++) {
+                correctHTML += "<p class='correct'>✓ " + correctAnswers[i] + '</p>';
+            }
+            document.getElementById('correct-list').innerHTML = correctHTML || '<p>None</p>';
+
+            let wrongHTML = '';
+            for (let i = 0; i < wrongAnswers.length; i++) {
+                wrongHTML += "<p><span class='wrong'>✗ " + wrongAnswers[i].typed + '</span> -> <span class="correct">' + wrongAnswers[i].correct + '</span></p>';
+            }
+            document.getElementById('wrong-list').innerHTML = wrongHTML || '<p>None</p>';
+
+            updateUserRuntimeStats();
+            showHistory();
+        }
+
+        function saveToHistory(word) {
+            const profile = getUserProfile();
+            const history = profile.history || [];
+            if (!history.includes(word)) {
+                profile.history = [...history, word];
+                saveUserProfile(profile);
+            }
+        }
+
+        function showHistory() {
+            const profile = getUserProfile();
+            const history = profile.history || [];
+            let html = '';
+            for (let i = 0; i < history.length; i++) {
+                html += "<span class='tag'>" + history[i] + '</span>';
+            }
+            document.getElementById('history-list').innerHTML = html || '<i>No words mastered yet.</i>';
+        }
+
+        function clearHistory() {
+            const profile = getUserProfile();
+            profile.history = [];
+            profile.review = [];
+            profile.stats = {
+                totalWordsDone: 0,
+                totalCorrect: 0,
+                totalTests: 0,
+                totalAttempts: 0
+            };
+            saveUserProfile(profile);
+            renderUserStats();
+            showHistory();
+        }
+
+        (function init() {
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                showAppScreen();
+            } else {
+                showAuthScreen();
+            }
+            showHistory();
+        })();
+    </script>
+</body>
+</html>
+
