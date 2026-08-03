@@ -249,11 +249,11 @@
             margin: 24px auto 0;
         }
 
-        .start-screen, .test-screen, .result-screen {
+        .start-screen, .test-screen, .result-screen, .meaning-screen {
             text-align: center;
         }
 
-        .start-screen h1, .result-screen h1 {
+        .start-screen h1, .result-screen h1, .meaning-screen h1 {
             font-size: clamp(2rem, 5vw, 2.8rem);
             margin-bottom: 12px;
         }
@@ -361,6 +361,14 @@
             margin: 20px 0 22px;
         }
 
+        .start-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
         .dashboard-card {
             background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
             border: 1px solid var(--border);
@@ -414,6 +422,35 @@
             padding: 7px 10px;
             margin: 6px 6px 0 0;
             font-size: 13px;
+        }
+
+        .meaning-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+            text-align: left;
+        }
+
+        .meaning-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 14px 12px;
+        }
+
+        .meaning-word {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .meaning-urdu {
+            color: var(--text-soft);
+            font-size: 15px;
+            line-height: 1.5;
         }
 
         .history-panel {
@@ -564,7 +601,10 @@
 
                     <div id="profile-stats" class="stats-row" aria-live="polite"></div>
 
-                    <button class="primary-btn" onclick="startTest()">Start 20-Word Test</button>
+                    <div class="start-actions">
+                        <button class="primary-btn" onclick="startTest()">Start 20-Word Test</button>
+                        <button class="secondary-btn" onclick="showMeaningsScreen()">View Urdu Meanings</button>
+                    </div>
                 </div>
 
                 <div id="test-screen" class="test-screen" style="display:none;">
@@ -628,7 +668,20 @@
 
                     <div class="test-actions" style="margin-top: 24px;">
                         <button class="primary-btn" onclick="startTest()">New Test</button>
-                        <button class="secondary-btn" onclick="showStartScreen()">Back to Home</button>
+                        <button class="secondary-btn" onclick="showMeaningsScreen(wordsList)">Urdu Meanings</button>
+                        <button class="secondary-btn" onclick="showStartScreen()">Back to Dashboard</button>
+                    </div>
+                </div>
+
+                <div id="meaning-screen" class="meaning-screen" style="display:none;">
+                    <h1>Word Meanings in Urdu</h1>
+                    <p>Review the meanings of the words from this test set.</p>
+
+                    <div id="meaning-list" class="meaning-list"></div>
+
+                    <div class="test-actions" style="margin-top: 24px;">
+                        <button class="primary-btn" onclick="showStartScreen()">Back to Dashboard</button>
+                        <button class="secondary-btn" onclick="startTest()">Start New Test</button>
                     </div>
                 </div>
             </div>
@@ -700,6 +753,39 @@
             'ubiquitous', 'prevalent', 'profound', 'infrastructure', 'vulnerability', 'implementation',
             'fluctuation'
         ];
+
+        const urduWordMeanings = {
+            environment: 'ماحول',
+            technology: 'ٹیکنالوجی',
+            government: 'حکومت',
+            education: 'تعلیم',
+            society: 'معاشرہ',
+            academic: 'تعلیمی',
+            analysis: 'تجزیہ',
+            approach: 'طریقہ',
+            benefit: 'فائدہ',
+            concept: 'تصور',
+            context: 'سیاق و سباق',
+            economic: 'اقتصادی',
+            financial: 'مالی',
+            individual: 'فرد',
+            legal: 'قانونی',
+            method: 'طریقہ کار',
+            period: 'مدت',
+            policy: 'پالیسی',
+            research: 'تحقیق',
+            significant: 'اہم',
+            sustainable: 'پائیدار',
+            theory: 'نظریہ',
+            lucrative: 'فائدہ مند',
+            ubiquitous: 'ہر جگہ موجود',
+            prevalent: 'عام',
+            profound: 'گہرا',
+            infrastructure: 'بنیادی ڈھانچہ',
+            vulnerability: 'کمزوری',
+            implementation: 'نفاذ',
+            fluctuation: 'اتار چڑھاو'
+        };
 
         let wordsList = [];
         let reviewWords = [];
@@ -956,8 +1042,32 @@
         function showStartScreen() {
             document.getElementById('test-screen').style.display = 'none';
             document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('meaning-screen').style.display = 'none';
             document.getElementById('start-screen').style.display = 'block';
             renderUserStats();
+        }
+
+        function renderWordMeanings(words) {
+            const list = words && words.length ? [...new Set(words)] : [...mainWords];
+            const container = document.getElementById('meaning-list');
+            container.innerHTML = list.map(word => {
+                const cleanWord = String(word).trim();
+                const meaning = urduWordMeanings[cleanWord.toLowerCase()] || 'اردو معنی دستیاب نہیں ہے۔';
+                return `
+                    <div class="meaning-item">
+                        <span class="meaning-word">${cleanWord}</span>
+                        <div class="meaning-urdu">${meaning}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showMeaningsScreen(selectedWords = wordsList.length ? wordsList : mainWords) {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('test-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('meaning-screen').style.display = 'block';
+            renderWordMeanings(selectedWords);
         }
 
         function showResults() {
